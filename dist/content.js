@@ -26,7 +26,7 @@ class ChatworkMentionExtension {
         this.createMentionListElement();
         console.log("Chatwork Mention Extension: Initialized successfully.");
     }
-    extractUsersFromPage() {
+    async extractUsersFromPage(retryCount = 0) {
         // ユーザー情報を抽出するセレクタを改善
         const userElements = document.querySelectorAll('li[role="listitem"] [data-cwui-lt-idx], [data-testid="contact-list-item"]');
         const uniqueUsers = new Map();
@@ -73,9 +73,36 @@ class ChatworkMentionExtension {
                 });
             }
         });
+        // サイドバーのルームリストからも抽出を試行（新UI対応）
+        const sidebarRoomItems = document.querySelectorAll('#RoomList ul > li[role="tab"][data-rid]');
+        sidebarRoomItems.forEach((item, idx) => {
+            if (idx < 5) {
+                console.log('Sidebar room item sample:', item.outerHTML);
+            }
+            const userId = item.getAttribute("data-rid");
+            const nameElement = item.querySelector('p');
+            const avatarElement = item.querySelector('img');
+            const userName = nameElement?.textContent?.trim() || '';
+            if (userId && userName && !uniqueUsers.has(userId)) {
+                uniqueUsers.set(userId, {
+                    id: userId,
+                    name: userName,
+                    avatar: avatarElement?.getAttribute("src") || undefined,
+                });
+            }
+        });
         this.users = Array.from(uniqueUsers.values());
         if (this.users.length === 0) {
-            console.warn("Chatwork Mention Extension: No users found on the page. Mention feature might not work correctly.");
+            if (retryCount < 5) {
+                // 1秒後にリトライ（最大5回）
+                setTimeout(() => this.extractUsersFromPage(retryCount + 1), 1000);
+                if (retryCount === 0) {
+                    console.warn("Chatwork Mention Extension: No users found on the page. Retrying...");
+                }
+            }
+            else {
+                console.warn("Chatwork Mention Extension: No users found on the page after multiple attempts. Mention feature might not work correctly.");
+            }
         }
         else {
             console.log(`Chatwork Mention Extension: Found ${this.users.length} users.`, this.users);
