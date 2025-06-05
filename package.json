@@ -1,0 +1,15 @@
+{
+  "name": "chatwork-mention-extension",
+  "version": "1.0.0",
+  "description": "Chatworkで@メンション機能を追加するChrome拡張機能",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "dev": "tsc --watch"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/chrome": "^0.0.268"
+  },
+  "private": true
+}

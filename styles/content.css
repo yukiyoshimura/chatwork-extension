@@ -1,0 +1,106 @@
+/* Chatwork Mention Extension のスタイル */
+
+.chatwork-mention-list {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 10000; /* ChatworkのUIより手前に表示 */
+  display: none; /* 初期状態は非表示 */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial,
+    sans-serif;
+  font-size: 13px; /* 少し小さく */
+  line-height: 1.5;
+  min-width: 220px; /* 最小幅を調整 */
+}
+
+.mention-item {
+  padding: 6px 10px; /* パディング調整 */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.1s ease;
+}
+
+.mention-item:last-child {
+  border-bottom: none;
+}
+
+.mention-item:hover {
+  background-color: #f5f5f5 !important; /* ホバー色変更 */
+}
+
+.mention-item.selected {
+  background-color: #e0efff !important; /* 選択色変更 */
+  color: #0056b3;
+}
+
+.mention-avatar,
+.mention-avatar-placeholder {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-right: 10px; /* マージン調整 */
+  flex-shrink: 0;
+  object-fit: cover; /* アバター画像がコンテナに収まるように */
+}
+
+.mention-avatar-placeholder {
+  background-color: #d0d0d0; /* プレースホルダー色 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: white;
+}
+.mention-avatar-placeholder::before {
+  content: "👤"; /* 絵文字アイコン */
+}
+
+.mention-name {
+  font-weight: 500;
+  color: #222; /* 少し濃く */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-grow: 1; /* 名前がスペースを埋めるように */
+}
+
+.mention-id {
+  font-size: 0.85em;
+  color: #777;
+  margin-left: 8px;
+  white-space: nowrap;
+}
+
+/* Chatworkのスタイルと競合しないように特異性を高める */
+/* 基本スタイルは .chatwork-mention-list で設定済みなので、
+   ここでは特異性が必要な場合や上書きのみ記述 */
+
+.chatwork-mention-list .mention-item {
+  /* 必要に応じてChatworkのスタイルを上書き */
+  background: white !important; /* 強制的に背景を白に */
+}
+
+/* スクロールバーのスタイル (WebKit系ブラウザ) */
+.chatwork-mention-list::-webkit-scrollbar {
+  width: 8px; /* 少し太く */
+}
+
+.chatwork-mention-list::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 4px;
+}
+
+.chatwork-mention-list::-webkit-scrollbar-thumb {
+  background: #b0b0b0; /* 少し濃く */
+  border-radius: 4px;
+}
+
+.chatwork-mention-list::-webkit-scrollbar-thumb:hover {
+  background: #909090; /* ホバー時さらに濃く */
+}
