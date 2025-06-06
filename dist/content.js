@@ -76,9 +76,7 @@ class ChatworkMentionExtension {
         // サイドバーのルームリストからも抽出を試行（新UI対応）
         const sidebarRoomItems = document.querySelectorAll('#RoomList ul > li[role="tab"][data-rid]');
         sidebarRoomItems.forEach((item, idx) => {
-            if (idx < 5) {
-                console.log("Sidebar room item sample:", item.outerHTML);
-            }
+            // 不要なデバッグ出力を削除
             const userId = item.getAttribute("data-rid");
             let nameElement = item.querySelector("div.sc-jOJSqX p");
             if (!nameElement) {
@@ -86,14 +84,6 @@ class ChatworkMentionExtension {
             }
             const avatarElement = item.querySelector("img");
             const userName = nameElement?.textContent?.trim() || "";
-            // デバッグ出力
-            console.log("[MentionExtension] sidebarRoomItem:", {
-                userId,
-                userName,
-                nameElement,
-                avatarElement,
-                item: item.outerHTML,
-            });
             if (userId && userName && !uniqueUsers.has(userId)) {
                 uniqueUsers.set(userId, {
                     id: userId,
@@ -118,8 +108,6 @@ class ChatworkMentionExtension {
         else {
             console.log(`Chatwork Mention Extension: Found ${this.users.length} users.`, this.users);
         }
-        // メンションリストの内容もデバッグ出力
-        console.log("[MentionExtension] this.users:", this.users);
     }
     observeChatInputArea() {
         // Chatworkのメインチャット入力エリアを特定し、その親要素を監視
@@ -257,14 +245,12 @@ class ChatworkMentionExtension {
             const avatarImg = user.avatar
                 ? `<img src="${user.avatar}" alt="${user.name}" class="mention-avatar">`
                 : `<div class="mention-avatar-placeholder"></div>`;
-            // デバッグ: 表示する名前を明示
-            console.log("[MentionExtension] mention list item:", user.name);
+            // 不要なデバッグ出力を削除
             // 名前のみを表示
             item.innerHTML = `
         ${avatarImg}
         <span class="mention-name">${user.name}</span>
       `;
-            console.log("[MentionExtension] item.innerHTML:", item.innerHTML);
             item.addEventListener("mousedown", (e) => {
                 e.preventDefault();
                 this.selectedIndex = index;
