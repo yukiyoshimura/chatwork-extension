@@ -77,12 +77,23 @@ class ChatworkMentionExtension {
         const sidebarRoomItems = document.querySelectorAll('#RoomList ul > li[role="tab"][data-rid]');
         sidebarRoomItems.forEach((item, idx) => {
             if (idx < 5) {
-                console.log('Sidebar room item sample:', item.outerHTML);
+                console.log("Sidebar room item sample:", item.outerHTML);
             }
             const userId = item.getAttribute("data-rid");
-            const nameElement = item.querySelector('p');
-            const avatarElement = item.querySelector('img');
-            const userName = nameElement?.textContent?.trim() || '';
+            let nameElement = item.querySelector("div.sc-jOJSqX p");
+            if (!nameElement) {
+                nameElement = item.querySelector("p");
+            }
+            const avatarElement = item.querySelector("img");
+            const userName = nameElement?.textContent?.trim() || "";
+            // デバッグ出力
+            console.log("[MentionExtension] sidebarRoomItem:", {
+                userId,
+                userName,
+                nameElement,
+                avatarElement,
+                item: item.outerHTML,
+            });
             if (userId && userName && !uniqueUsers.has(userId)) {
                 uniqueUsers.set(userId, {
                     id: userId,
@@ -107,6 +118,8 @@ class ChatworkMentionExtension {
         else {
             console.log(`Chatwork Mention Extension: Found ${this.users.length} users.`, this.users);
         }
+        // メンションリストの内容もデバッグ出力
+        console.log("[MentionExtension] this.users:", this.users);
     }
     observeChatInputArea() {
         // Chatworkのメインチャット入力エリアを特定し、その親要素を監視
@@ -244,13 +257,15 @@ class ChatworkMentionExtension {
             const avatarImg = user.avatar
                 ? `<img src="${user.avatar}" alt="${user.name}" class="mention-avatar">`
                 : `<div class="mention-avatar-placeholder"></div>`;
+            // デバッグ: 表示する名前を明示
+            console.log("[MentionExtension] mention list item:", user.name);
+            // 名前のみを表示
             item.innerHTML = `
         ${avatarImg}
         <span class="mention-name">${user.name}</span>
-        <span class="mention-id">(${user.id})</span>
       `;
+            console.log("[MentionExtension] item.innerHTML:", item.innerHTML);
             item.addEventListener("mousedown", (e) => {
-                // clickだとblurが先に発火することがある
                 e.preventDefault();
                 this.selectedIndex = index;
                 this.insertMention();
@@ -290,9 +305,8 @@ class ChatworkMentionExtension {
         if (match) {
             const mentionTrigger = match[0];
             const startIndex = cursorPos - mentionTrigger.length;
-            // Chatworkの標準的なメンション形式 [To:ユーザーID] を使用
-            // ユーザー名はChatwork側で表示されるため、ここではIDのみで良い
-            const mentionText = `[To:${user.id}] `;
+            // Chatworkの標準的なメンション形式 [To:ユーザーID] ユーザー名 を使用
+            const mentionText = `[To:${user.id}] ${user.name} `;
             input.value =
                 currentText.substring(0, startIndex) +
                     mentionText +
